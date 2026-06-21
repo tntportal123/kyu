@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Thiệp mời kỉ yếu - Gửi Phương Anh</title>
+  <style>
+    :root {
+      --ink: #203f45;
+      --muted: #587077;
+      --rose: #8a3b4a;
+      --gold: #e3bd66;
+      --paper: #fffdf8;
+      --envelope: #eab98f;
+      --envelope-dark: #bf8059;
+      --teal: #1f6f78;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      color: var(--ink);
+      font-family: "Segoe UI", Arial, sans-serif;
+      background:
+        radial-gradient(circle at 12% 13%, #f4d6d2 0 130px, transparent 132px),
+        radial-gradient(circle at 88% 86%, #cce8df 0 150px, transparent 152px),
+        linear-gradient(145deg, #f6efe7 0%, #dbefeb 100%);
+    }
+
+    .stage {
+      width: min(94vw, 860px);
+      min-height: min(92vh, 640px);
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      justify-items: center;
+      gap: 18px;
+      padding: 28px 16px 24px;
+    }
+
+    .heading {
+      text-align: center;
+      user-select: none;
+    }
+
+    .heading h1 {
+      margin: 0;
+      color: #1c3f45;
+      font-size: clamp(24px, 4vw, 36px);
+      letter-spacing: 0;
+    }
+
+    .heading p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: clamp(14px, 2vw, 17px);
+    }
+
+    .scene {
+      position: relative;
+      width: min(92vw, 460px);
+      aspect-ratio: 1 / 0.92;
+      align-self: center;
+      cursor: pointer;
+      perspective: 900px;
+    }
+
+    .card {
+      position: absolute;
+      left: 50%;
+      bottom: 28px;
+      z-index: 5;
+      width: 76%;
+      min-height: 78%;
+      padding: 24px 24px 22px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      background: var(--paper);
+      border: 2px solid #d8bfa3;
+      box-shadow: 0 12px 22px rgb(58 42 28 / 20%);
+      transform: translate(-50%, 34%);
+      opacity: 0;
+      transition:
+        transform 900ms cubic-bezier(.2, .8, .18, 1),
+        opacity 300ms ease;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      border: 2px solid var(--gold);
+      pointer-events: none;
+    }
+
+    .scene.open .card {
+      transform: translate(-50%, 0);
+      opacity: 1;
+    }
+
+    .card-title {
+      position: relative;
+      z-index: 1;
+      margin: 0;
+      color: var(--rose);
+      font-size: clamp(19px, 4.4vw, 25px);
+      font-weight: 800;
+      line-height: 1.12;
+    }
+
+    .gold-line {
+      position: relative;
+      z-index: 1;
+      width: 66%;
+      height: 2px;
+      margin: 14px 0 10px;
+      background: var(--gold);
+    }
+
+    .gold-line::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 8px;
+      width: 48%;
+      height: 1px;
+      background: var(--gold);
+      transform: translateX(-50%);
+    }
+
+    .recipient-label {
+      position: relative;
+      z-index: 1;
+      margin-top: 11px;
+      color: #7d5a50;
+      font-size: clamp(13px, 2.9vw, 15px);
+    }
+
+    .recipient-name {
+      position: relative;
+      z-index: 1;
+      margin: 3px 0 14px;
+      color: var(--rose);
+      font-family: "Segoe Script", "Brush Script MT", cursive;
+      font-size: clamp(25px, 6vw, 34px);
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .message {
+      position: relative;
+      z-index: 1;
+      margin: 0;
+      max-width: 28ch;
+      color: #2d464a;
+      font-size: clamp(13px, 3.2vw, 16px);
+      line-height: 1.48;
+    }
+
+    .closing {
+      position: relative;
+      z-index: 1;
+      margin: auto 0 4px;
+      color: var(--teal);
+      font-size: clamp(14px, 3.5vw, 17px);
+      font-weight: 800;
+      line-height: 1.25;
+    }
+
+    .signature {
+      position: relative;
+      z-index: 1;
+      margin: 0;
+      color: #7d5a50;
+      font-family: "Segoe Script", "Brush Script MT", cursive;
+      font-size: clamp(12px, 3vw, 15px);
+    }
+
+    .envelope {
+      position: absolute;
+      left: 50%;
+      bottom: 28px;
+      z-index: 3;
+      width: 94%;
+      height: 58%;
+      transform: translateX(-50%);
+    }
+
+    .envelope-back,
+    .envelope-left,
+    .envelope-right,
+    .envelope-front,
+    .flap {
+      position: absolute;
+      inset: 0;
+      border: 2px solid var(--envelope-dark);
+    }
+
+    .envelope-back {
+      background: #edc7a5;
+    }
+
+    .envelope-left {
+      clip-path: polygon(0 0, 50% 100%, 0 100%);
+      background: #e9b98f;
+    }
+
+    .envelope-right {
+      clip-path: polygon(100% 0, 50% 100%, 100% 100%);
+      background: #e9b98f;
+    }
+
+    .envelope-front {
+      z-index: 2;
+      clip-path: polygon(0 100%, 50% 44%, 100% 100%);
+      background: #d99b72;
+    }
+
+    .flap {
+      z-index: 4;
+      clip-path: polygon(0 0, 100% 0, 50% 72%);
+      background: #e6ad85;
+      transform-origin: top center;
+      transition: transform 720ms cubic-bezier(.2, .75, .2, 1), background 720ms ease;
+    }
+
+    .scene.open .flap {
+      background: #f4d6bd;
+      transform: rotateX(178deg);
+    }
+
+    .seal {
+      position: absolute;
+      left: 50%;
+      top: 43%;
+      z-index: 6;
+      width: 58px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      color: white;
+      font: 800 20px Georgia, serif;
+      background: #9c3d4d;
+      border-radius: 999px;
+      transform: translate(-50%, -50%);
+      transition: opacity 180ms ease;
+    }
+
+    .scene.open .seal {
+      opacity: 0;
+    }
+
+    .button {
+      border: 0;
+      border-radius: 6px;
+      padding: 11px 26px;
+      color: white;
+      background: var(--teal);
+      font: 800 16px "Segoe UI", Arial, sans-serif;
+      cursor: pointer;
+      box-shadow: 0 8px 16px rgb(25 75 82 / 20%);
+    }
+
+    .button:hover {
+      background: #15535a;
+    }
+
+    .confetti {
+      position: fixed;
+      left: var(--x);
+      top: -18px;
+      z-index: 20;
+      width: var(--s);
+      height: calc(var(--s) * .55);
+      border-radius: 1px;
+      background: var(--c);
+      opacity: 0;
+      pointer-events: none;
+      animation: fall 1.8s linear forwards;
+      animation-delay: var(--d);
+    }
+
+    @keyframes fall {
+      0% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) rotate(0deg);
+      }
+      100% {
+        opacity: 0;
+        transform: translate3d(var(--drift), 105vh, 0) rotate(230deg);
+      }
+    }
+
+    @media (max-width: 520px) {
+      .stage {
+        min-height: 100vh;
+        padding-top: 22px;
+        gap: 12px;
+      }
+
+      .scene {
+        width: min(96vw, 410px);
+      }
+
+      .card {
+        width: 78%;
+        min-height: 80%;
+        padding: 20px 18px 18px;
+      }
+
+      .message {
+        max-width: 25ch;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="stage">
+    <header class="heading">
+      <h1>Kỉ yếu của chúng mình</h1>
+      <p>Một lời mời nhỏ cho một ngày thật đáng nhớ</p>
+    </header>
+
+    <section class="scene" id="scene" aria-label="Thiệp mời kỉ yếu">
+      <article class="card">
+        <h2 class="card-title">THIỆP MỜI<br>KỈ YẾU</h2>
+        <div class="gold-line" aria-hidden="true"></div>
+        <div class="recipient-label">Gửi</div>
+        <div class="recipient-name" id="recipientName">Phương Anh</div>
+        <p class="message">
+          Mình sắp có một buổi kỉ yếu thật đẹp, nơi lưu lại thanh xuân,
+          tiếng cười và những kỉ niệm khó quên.
+          <br><br>
+          <span id="inviteLine">Mời Phương Anh đến chung vui và cùng chụp những tấm hình đáng nhớ nhé!</span>
+        </p>
+        <p class="closing" id="closingLine">Hẹn gặp Phương Anh ở buổi kỉ yếu!</p>
+      </article>
+
+      <div class="envelope" aria-hidden="true">
+        <div class="envelope-back"></div>
+        <div class="flap"></div>
+        <div class="envelope-left"></div>
+        <div class="envelope-right"></div>
+        <div class="envelope-front"></div>
+        <div class="seal" id="sealLetter">A</div>
+      </div>
+    </section>
+
+    <button class="button" id="openButton" type="button">Mở thiệp</button>
+  </main>
+
+  <script>
+    const scene = document.querySelector("#scene");
+    const button = document.querySelector("#openButton");
+    const colors = ["#e85d75", "#f2b84b", "#45a29e", "#7d5fff", "#2f9e44", "#f76707"];
+    const params = new URLSearchParams(window.location.search);
+    const guestName = (params.get("ten") || params.get("name") || "Phương Anh").trim();
+    const sealByName = new Map([
+      ["Phương Anh", "A"],
+      ["Quang Hiếu", "Q"],
+      ["Công Minh", "M"],
+    ]);
+    const sealLetter = (params.get("chu") || sealByName.get(guestName) || guestName.charAt(0)).trim();
+
+    document.title = `Thiệp mời kỉ yếu - Gửi ${guestName}`;
+    document.querySelector("#recipientName").textContent = guestName;
+    document.querySelector("#inviteLine").textContent =
+      `Mời ${guestName} đến chung vui và cùng chụp những tấm hình đáng nhớ nhé!`;
+    document.querySelector("#closingLine").textContent =
+      `Hẹn gặp ${guestName} ở buổi kỉ yếu!`;
+    document.querySelector("#sealLetter").textContent =
+      sealLetter.charAt(0).toLocaleUpperCase("vi-VN");
+
+    function throwConfetti() {
+      document.querySelectorAll(".confetti").forEach((piece) => piece.remove());
+
+      for (let i = 0; i < 90; i += 1) {
+        const piece = document.createElement("span");
+        piece.className = "confetti";
+        piece.style.setProperty("--x", `${Math.random() * 100}vw`);
+        piece.style.setProperty("--s", `${4 + Math.random() * 8}px`);
+        piece.style.setProperty("--c", colors[Math.floor(Math.random() * colors.length)]);
+        piece.style.setProperty("--d", `${Math.random() * 0.75}s`);
+        piece.style.setProperty("--drift", `${-60 + Math.random() * 120}px`);
+        document.body.append(piece);
+      }
+    }
+
+    function toggleCard() {
+      const isOpen = scene.classList.toggle("open");
+      button.textContent = isOpen ? "Xem lại" : "Mở thiệp";
+
+      if (isOpen) {
+        throwConfetti();
+      }
+    }
+
+    scene.addEventListener("click", toggleCard);
+    button.addEventListener("click", toggleCard);
+    window.addEventListener("keydown", (event) => {
+      if (event.code === "Space" || event.code === "Enter") {
+        event.preventDefault();
+        toggleCard();
+      }
+    });
+  </script>
+</body>
+</html>
